@@ -194,12 +194,25 @@ package
                 //track_.getPeers();
                 track2_.getPlaylist("xx");
                 
-                nc_.removeEventListener(NetStatusEvent.NET_STATUS, onStatus);
+                //nc_.removeEventListener(NetStatusEvent.NET_STATUS, onStatus);
                 broadcaster_created = true;
             }
             else
             {
                 Logger.log("RtmfpClient connect result: " + event.info.code);
+                
+                // P2P connections send messages to a NetConnection with a stream parameter
+                // in the information object that indicates which NetStream the message pertains to.
+                
+                // if we close chrome tab, this event will trigger after 1 min. BAD...
+                // if we close IE tab, this event will trigger immediatly.
+                // Seems we have a bug here:
+                // https://code.google.com/p/chromium/issues/detail?id=166304&q=rtmfp&colspec=ID%20Pri%20M%20Iteration%20ReleaseBlock%20Cr%20Status%20Owner%20Summary%20OS%20Modified
+                if (event.info.hasOwnProperty("stream")) {
+                    if (event.info.code == "NetStream.Connect.Closed") {
+                        bc_.remotePeer(event.info.stream.farID);
+                    }
+                }
             }
         }
     }

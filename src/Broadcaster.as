@@ -28,6 +28,10 @@ package
             Logger.log("LOCAL ID: " + nc_.nearID);
         }
         
+        public function remotePeer(farID:String):void {
+            trace("WE NEED TO REMOVE: " + farID);
+        }
+        
         public function requestPiece(id:int):void {
             bc_.send("requestPiece", id);
         }
@@ -116,7 +120,7 @@ package
             for (var x:* in peerlists_) {
                 xx++;
             }
-            //trace("who has piece id: " + id +" localID: " + nc_.nearID + " peerList count: " + xx);
+            trace("who has piece id: " + id +" localID: " + nc_.nearID);
             var idstr:String = "" + id;
             piece_owners[idstr] = new Object();
             piece_owners[idstr]['total_sent'] = 0;
@@ -191,6 +195,7 @@ package
         }
         
         private function need_piece(remoteID:String, pieceID:int):void {
+            trace("need piece, remoteID: " + remoteID + " pieceId: " + pieceID);
             peerlists_[remoteID]['private_publish'].send('need_piece', nc_.nearID, pieceID);
         }
         
@@ -211,7 +216,7 @@ package
                 dispatchEvent(who_has_piece_event);
             }
             client.i_have_piece = function(remoteID:String, pieceID:int, have_piece:Boolean):void {
-                //trace('i have piece: remoteID: ' + remoteID + " pieceID: " + pieceID + " localId: " + nc_.nearID);
+                trace('i have piece: remoteID: ' + remoteID + " pieceID: " + pieceID + " localId: " + nc_.nearID);
                
                 var pieceIDstr:String = "" + pieceID;
                 /*
@@ -273,7 +278,7 @@ package
         }
         
         private function onNetStatusX(event:NetStatusEvent):void {
-            
+            trace("onNetStatusX, code: " + event.info.code);
         }
         
         private function onNetStatus2(event:NetStatusEvent):void {
@@ -292,6 +297,8 @@ package
         }
         
         private function onNetStatus(event:NetStatusEvent):void {
+            // NetStream.Play.Reset
+            // NetStream.Play.Start
             Logger.log("Broadcaster: " + event.info.code);
         }
     }
